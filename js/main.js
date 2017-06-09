@@ -199,7 +199,7 @@ var display3dMap = function() {
   camera.position.set(0, -70, 50);
 
   renderer.setSize(width, height);
-  renderer.shadowMapEnabled = true;
+  // renderer.shadowMapEnabled = true;
 
   var geometry = new THREE.PlaneGeometry(60, 60, mapWidth - 1, mapHeight - 1);
   geometry.computeFaceNormals();
