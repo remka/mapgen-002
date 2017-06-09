@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Map generation withh simplex noise</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body id="home" class="">
+
+  <div id="container">
+    <div id="mapContainer"></div>
+    <canvas id="mapCanvas">Your browser does not support the HTML5 canvas tag.</canvas>
+  </div>
+
+  <ul id="nav">
+    <li><button type="button" id="noise-new">New map</button></li>
+  </ul>
+
+  <div id="tile-info">&nbsp;</div>
+
+  <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+  <script src="js/simplex.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
