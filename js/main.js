@@ -19,7 +19,6 @@ var mapMoisture = [];
 // jquery shortcuts
 var $mapContainer = $('#mapContainer');
 var $tiles = $('.tile');
-var $c = $('#mapCanvas'), ctx = $c[0].getContext('2d');
 
 // Make biomes
 // TODO: Make that cleaner, maybe store as json somewhere
@@ -170,12 +169,40 @@ var displayMap = function() {
   console.log('Map built in ' + (end - start) + ' ms');
 };
 
+var display3dMap = function() {
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+  var renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setClearColor( 0xffffff, 0);
+  document.body.appendChild( renderer.domElement );
+
+  var geometry = new THREE.BoxGeometry( 2, 1, 1 );
+  var material = new THREE.MeshPhongMaterial({
+    color: 0xdddddd,
+    wireframe: true
+  });
+  var cube = new THREE.Mesh( geometry, material );
+  scene.add( cube );
+
+  camera.position.z = 5;
+
+  function render() {
+  	requestAnimationFrame( render );
+  	renderer.render( scene, camera );
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+  }
+  render();
+};
+
 // Create empty arrays, maps and display them
 var createTerrain = function() {
   createArrays();
   createMap();
   // resizeCanvas();
-  displayMap();
+  // displayMap();
+  display3dMap();
   console.log('-----');
 };
 
