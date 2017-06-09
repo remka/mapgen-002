@@ -6,10 +6,6 @@ var tileH = 10;
 var mapWidth = 120;
 var mapHeight = 120;
 
-var tick = 0;
-var cycle = 0;
-var cycleLength = 100;
-
 var drawMode = 'canvas'; // 'dom' or 'canvas'
 var viewMode = 'biomes'; // 'biomes' or 'height'
 
@@ -19,11 +15,13 @@ var gen;
 // Arrays to store elevations and moisture
 var mapElevations = [];
 var mapMoisture = [];
-var mapElFlat = [];
 
 // jquery shortcuts
 var $mapContainer = $('#mapContainer');
 var $tiles = $('.tile');
+
+// three renderer
+var renderer = new THREE.WebGLRenderer();
 
 // Make biomes
 // TODO: Make that cleaner, maybe store as json somewhere
@@ -179,10 +177,13 @@ var display3dMap = function() {
   //var renderer = new THREE.WebGLRenderer({ alpha: true });
   //renderer.setClearColor( 0xffffff, 0);
 
-  $('canvas').remove();
+  $('#webgl').empty();
 
   // flatten arry first
-
+  var newArr = [];
+  for(var i = 0; i < mapElevations.length; i++) {
+    newArr = newArr.concat(mapElevations[i]);
+  }
 
   var width  = window.innerWidth,
       height = window.innerHeight;
@@ -197,52 +198,58 @@ var display3dMap = function() {
   var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
   camera.position.set(0, -70, 50);
 
-  var renderer = new THREE.WebGLRenderer();
   renderer.setSize(width, height);
+  renderer.shadowMapEnabled = true;
 
   var geometry = new THREE.PlaneGeometry(60, 60, mapWidth - 1, mapHeight - 1);
+  geometry.computeFaceNormals();
+  geometry.computeVertexNormals();
 
-  updateVertices(geometry);
+  for (var i = 0, l = geometry.vertices.length; i < l; i++) {
+    var height = Math.floor(newArr[i]*100);
+    height /= 3;
+    //height = Math.round(height / 10000 * 2470);
+    //console.log(height);
+    geometry.vertices[i].z = height;
+  }
 
   var material = new THREE.MeshPhongMaterial({
     color: 0xdddddd,
     wireframe: true
   });
 
+  /*
+  var material = new THREE.MeshPhongMaterial({
+    color: 0xff3300,
+    specular: 0x555555,
+    shininess: 30
+  });
+  */
+
+
   var plane = new THREE.Mesh(geometry, material);
+  plane.castShadow = true;
+  plane.receiveShadow = true;
   scene.add(plane);
 
   var controls = new THREE.TrackballControls(camera);
   document.getElementById('webgl').appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0x404040));
+  var light = new THREE.DirectionalLight(0xffffff, 1);
+  light.shadowCameraVisible = true;
+  light.position.set(0,300,100);
+  light.castShadow = true;
+  scene.add(light);
+
   render();
 
   function render() {
-    if ( tick >= cycleLength) {
-      tick = 0;
-      cycle += 1;
-      console.log(cycle);
-    } else {
-      tick += 1;
-    }
     controls.update();
     requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
 
-};
-
-var updateVertices = function(geo) {
-
-  for(var i = 0; i < mapElevations.length; i++) {
-    mapElFlat = mapElFlat.concat(mapElevations[i]);
-  }
-  for (var i = 0, l = geo.vertices.length; i < l; i++) {
-    var height = Math.floor(mapElFlat[i]*100);
-    height /= 4;
-    //height = Math.round(height / 10000 * 2470);
-    //console.log(height);
-    geo.vertices[i].z = height;
-  }
 };
 
 // Create empty arrays, maps and display them
