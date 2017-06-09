@@ -170,30 +170,62 @@ var displayMap = function() {
 };
 
 var display3dMap = function() {
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-  var renderer = new THREE.WebGLRenderer({ alpha: true });
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  renderer.setClearColor( 0xffffff, 0);
-  document.body.appendChild( renderer.domElement );
 
-  var geometry = new THREE.BoxGeometry( 2, 1, 1 );
+  //var renderer = new THREE.WebGLRenderer({ alpha: true });
+  //renderer.setClearColor( 0xffffff, 0);
+
+  $('canvas').remove();
+
+  // flatten arry first
+  var newArr = [];
+  for(var i = 0; i < mapElevations.length; i++) {
+    newArr = newArr.concat(mapElevations[i]);
+  }
+
+  var width  = window.innerWidth,
+      height = window.innerHeight;
+
+  var scene = new THREE.Scene();
+
+  /*
+  var axes = new THREE.AxisHelper(200);
+  scene.add(axes);
+  */
+
+  var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  camera.position.set(0, -70, 50);
+
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(width, height);
+
+  var geometry = new THREE.PlaneGeometry(60, 60, mapWidth - 1, mapHeight - 1);
+
+  for (var i = 0, l = geometry.vertices.length; i < l; i++) {
+    var height = Math.floor(newArr[i]*100);
+    height /= 4;
+    //height = Math.round(height / 10000 * 2470);
+    //console.log(height);
+    geometry.vertices[i].z = height;
+  }
+
   var material = new THREE.MeshPhongMaterial({
     color: 0xdddddd,
     wireframe: true
   });
-  var cube = new THREE.Mesh( geometry, material );
-  scene.add( cube );
 
-  camera.position.z = 5;
+  var plane = new THREE.Mesh(geometry, material);
+  scene.add(plane);
+
+  var controls = new THREE.TrackballControls(camera);
+  document.getElementById('webgl').appendChild(renderer.domElement);
+  render();
 
   function render() {
-  	requestAnimationFrame( render );
-  	renderer.render( scene, camera );
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    controls.update();
+    requestAnimationFrame(render);
+    renderer.render(scene, camera);
   }
-  render();
+
 };
 
 // Create empty arrays, maps and display them
