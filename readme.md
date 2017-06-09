@@ -1,4 +1,4 @@
-<img src="https://preview.ibb.co/hufedF/Screen_Shot_2017_06_08_at_4_51_30_PM.png" alt="Simple terrain generation">
+<img src="https://preview.ibb.co/dhH7YF/Screen_Shot_2017_06_09_at_5_52_23_PM.png" alt="Simple terrain generation">
 
 ## About this
 
@@ -8,11 +8,10 @@ The Simplex noise is using [simplex-noise.js by Jonas Wagner](https://github.com
 
 For now, it does the following:  
 - Generates a two dimension array map with heights from 0 to 1  
-- Builds the map either in DOM or in Canvas
+- Builds the map either in 3D with Three.js
 
 TODO:  
 - Add moisture, to create more interesting biomes  
 - Add temperature, to add even more diversity  
 - Isometric visualization?  
-- Three.js for 3d visualization?   
 - ...    
