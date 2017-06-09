@@ -6,6 +6,10 @@ var tileH = 10;
 var mapWidth = 120;
 var mapHeight = 120;
 
+var tick = 0;
+var cycle = 0;
+var cycleLength = 100;
+
 var drawMode = 'canvas'; // 'dom' or 'canvas'
 var viewMode = 'biomes'; // 'biomes' or 'height'
 
@@ -15,6 +19,7 @@ var gen;
 // Arrays to store elevations and moisture
 var mapElevations = [];
 var mapMoisture = [];
+var mapElFlat = [];
 
 // jquery shortcuts
 var $mapContainer = $('#mapContainer');
@@ -177,10 +182,7 @@ var display3dMap = function() {
   $('canvas').remove();
 
   // flatten arry first
-  var newArr = [];
-  for(var i = 0; i < mapElevations.length; i++) {
-    newArr = newArr.concat(mapElevations[i]);
-  }
+
 
   var width  = window.innerWidth,
       height = window.innerHeight;
@@ -200,13 +202,7 @@ var display3dMap = function() {
 
   var geometry = new THREE.PlaneGeometry(60, 60, mapWidth - 1, mapHeight - 1);
 
-  for (var i = 0, l = geometry.vertices.length; i < l; i++) {
-    var height = Math.floor(newArr[i]*100);
-    height /= 4;
-    //height = Math.round(height / 10000 * 2470);
-    //console.log(height);
-    geometry.vertices[i].z = height;
-  }
+  updateVertices(geometry);
 
   var material = new THREE.MeshPhongMaterial({
     color: 0xdddddd,
@@ -221,11 +217,32 @@ var display3dMap = function() {
   render();
 
   function render() {
+    if ( tick >= cycleLength) {
+      tick = 0;
+      cycle += 1;
+      console.log(cycle);
+    } else {
+      tick += 1;
+    }
     controls.update();
     requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
 
+};
+
+var updateVertices = function(geo) {
+
+  for(var i = 0; i < mapElevations.length; i++) {
+    mapElFlat = mapElFlat.concat(mapElevations[i]);
+  }
+  for (var i = 0, l = geo.vertices.length; i < l; i++) {
+    var height = Math.floor(mapElFlat[i]*100);
+    height /= 4;
+    //height = Math.round(height / 10000 * 2470);
+    //console.log(height);
+    geo.vertices[i].z = height;
+  }
 };
 
 // Create empty arrays, maps and display them
