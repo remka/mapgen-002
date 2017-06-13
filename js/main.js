@@ -202,20 +202,23 @@ var display3dMap = function() {
   // renderer.shadowMapEnabled = true;
 
   var geometry = new THREE.PlaneGeometry(60, 60, mapWidth - 1, mapHeight - 1);
-  geometry.computeFaceNormals();
-  geometry.computeVertexNormals();
 
   for (var i = 0, l = geometry.vertices.length; i < l; i++) {
     var height = Math.floor(newArr[i]*100);
     height /= 3;
-    //height = Math.round(height / 10000 * 2470);
-    //console.log(height);
     geometry.vertices[i].z = height;
   }
-
-  var material = new THREE.MeshPhongMaterial({
+  
+  var material = new THREE.MeshStandardMaterial({
+    /*
     color: 0xdddddd,
     wireframe: true
+    */
+    color: 0x666666,
+		roughness: 1,
+		metalness: 0,
+		shading: THREE.FlatShading
+
   });
 
   /*
@@ -235,18 +238,27 @@ var display3dMap = function() {
   var controls = new THREE.TrackballControls(camera);
   document.getElementById('webgl').appendChild(renderer.domElement);
 
-  scene.add(new THREE.AmbientLight(0x404040));
+  //scene.add(new THREE.AmbientLight(0xffffff));
+
+
   var light = new THREE.DirectionalLight(0xffffff, 1);
-  light.shadowCameraVisible = true;
-  light.position.set(0,300,100);
+  light.position.set(0, -20, 10);
   light.castShadow = true;
   scene.add(light);
+
+
+  scene.add( new THREE.HemisphereLight( 0xaaaaaa, 0x444444 ) );
+
+	var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+	light.position.set( 10, -20, 100 );
+	scene.add( light );
 
   render();
 
   function render() {
     controls.update();
     requestAnimationFrame(render);
+    plane.rotation.z += 0.005;
     renderer.render(scene, camera);
   }
 
