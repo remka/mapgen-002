@@ -208,7 +208,7 @@ var display3dMap = function() {
     height /= 3;
     geometry.vertices[i].z = height;
   }
-  
+
   var material = new THREE.MeshStandardMaterial({
     /*
     color: 0xdddddd,
@@ -264,6 +264,11 @@ var display3dMap = function() {
 
 };
 
+var addGui = function() {
+  var gui = new dat.GUI();
+  gui.add(text, 'message');
+};
+
 // Create empty arrays, maps and display them
 var createTerrain = function() {
   createArrays();
@@ -281,4 +286,5 @@ $('#noise-new').click(function() {
 
 $(function() {
   createTerrain();
+  //addGui();
 });
